@@ -20,7 +20,12 @@ source of truth; the Mermaid diagram is a generated view**).
 npm install
 cp .env.example .env   # then edit — set DATA_DIR=./.data for local dev
 npm run dev            # server on :3001, client on :5173 (proxies /api)
+npm test               # server unit tests (node:test)
 ```
+
+> **Sandboxed installs:** `better-sqlite3` builds from source (see `.npmrc`).
+> If your environment blocks `nodejs.org` header downloads, point node-gyp at a
+> local Node: `npm_config_nodedir=/opt/node22 npm install`.
 
 Open http://localhost:5173. With `APP_PASSWORD` empty the auth gate is
 disabled; set it to require a password.
@@ -49,6 +54,9 @@ npm start       # serves API + built client on $PORT
 
 ## Status
 
-Phase 0 (project skeleton, password gate, DB connection, Railway config) is in
-place. Remaining phases — data layer, structured editor, Mermaid two-way sync,
-print view, export/import — are tracked against the PRD sections.
+- **Phase 0** — project skeleton, password gate, DB connection, Railway config.
+- **Phase 1** — data layer (versioned SQLite schema for map/area/connection/
+  monster) and Map CRUD API + minimal map-list UI.
+
+Remaining phases — structured editor, Mermaid two-way sync, print view,
+export/import — are tracked against the PRD sections.

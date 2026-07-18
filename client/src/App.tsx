@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getAuthStatus, login, logout, ping } from './api';
+import { getAuthStatus, login, logout } from './api';
+import { MapsScreen } from './MapsScreen';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ export default function App() {
   }
 
   return (
-    <Home
+    <MapsScreen
       gateEnabled={gateEnabled}
       onLogout={async () => {
         await logout();
@@ -71,29 +72,6 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
           {busy ? 'Checking…' : 'Enter'}
         </button>
       </form>
-    </main>
-  );
-}
-
-function Home({ gateEnabled, onLogout }: { gateEnabled: boolean; onLogout: () => void }) {
-  const [pong, setPong] = useState<string | null>(null);
-
-  return (
-    <main className="shell">
-      <div className="card">
-        <h1>Eem Map Editor</h1>
-        <p className="muted">
-          Phase 0 skeleton is live. Map editing arrives in later phases.
-        </p>
-        <p className="muted">
-          Auth gate: <strong>{gateEnabled ? 'enabled' : 'disabled (dev)'}</strong>
-        </p>
-        <div className="row">
-          <button onClick={() => ping().then((r) => setPong(r.time))}>Ping API</button>
-          {gateEnabled && <button onClick={onLogout}>Log out</button>}
-        </div>
-        {pong && <p className="muted">Last pong: {pong}</p>}
-      </div>
     </main>
   );
 }
