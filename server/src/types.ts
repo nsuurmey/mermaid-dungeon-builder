@@ -83,6 +83,34 @@ export interface Connection {
   updated_at: string;
 }
 
+export interface CreateAreaInput {
+  name?: string;
+  description?: string;
+  gm_notes?: string;
+  treasure?: string;
+  features?: string;
+}
+
+export type UpdateAreaInput = CreateAreaInput;
+
+// --- Connection ------------------------------------------------------------
+
+export interface CreateConnectionInput {
+  from_area: string;
+  to_area: string;
+  type: ConnectionType;
+  label?: string;
+  bidirectional?: boolean;
+}
+
+export interface UpdateConnectionInput {
+  from_area?: string;
+  to_area?: string;
+  type?: ConnectionType;
+  label?: string;
+  bidirectional?: boolean;
+}
+
 // --- Monster (Land of Eem Adversary; Eem terms only — no AC/HP) ------------
 
 export interface Monster {
@@ -105,4 +133,33 @@ export interface Monster {
   defeat: string;
   victory: string;
   bestiary_ref: string;
+}
+
+export interface CreateMonsterInput {
+  name?: string;
+  level?: number | null;
+  class_tier?: ClassTier | null;
+  courage?: string;
+  attack?: number | null;
+  defense?: number | null;
+  block?: number | null;
+  dread?: string;
+  actions?: number | null;
+  abilities?: string;
+  vulnerabilities?: string;
+  social?: string;
+  combat_tactics?: string;
+  defeat?: string;
+  victory?: string;
+  bestiary_ref?: string;
+}
+
+export type UpdateMonsterInput = CreateMonsterInput;
+
+/** Everything needed to render/edit one map. */
+export interface FullMap {
+  map: Map;
+  areas: Area[];
+  connections: Connection[];
+  monsters: Monster[];
 }

@@ -57,6 +57,10 @@ npm start       # serves API + built client on $PORT
 - **Phase 0** — project skeleton, password gate, DB connection, Railway config.
 - **Phase 1** — data layer (versioned SQLite schema for map/area/connection/
   monster) and Map CRUD API + minimal map-list UI.
+- **Phase 2** — Area/Connection/Monster CRUD APIs (nested under a map), slug
+  minting (`A1`, `A2`, … never reused), and the split-pane structured editor
+  (left pane) with autosaving forms and monster sub-forms. The right pane shows
+  a text preview as a placeholder until Phase 3.
 
-Remaining phases — structured editor, Mermaid two-way sync, print view,
+Remaining phases — Mermaid two-way sync (right pane), print view,
 export/import — are tracked against the PRD sections.

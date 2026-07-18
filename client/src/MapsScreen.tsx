@@ -4,9 +4,11 @@ import { TONES, type Map, type Tone } from './types';
 
 export function MapsScreen({
   gateEnabled,
+  onOpen,
   onLogout,
 }: {
   gateEnabled: boolean;
+  onOpen: (id: string) => void;
   onLogout: () => void;
 }) {
   const [maps, setMaps] = useState<Map[]>([]);
@@ -94,10 +96,10 @@ export function MapsScreen({
           <ul className="map-list">
             {maps.map((m) => (
               <li key={m.id}>
-                <div>
+                <button className="link" onClick={() => onOpen(m.id)}>
                   <strong>{m.title}</strong>
                   <span className="muted"> · {m.tone} · {m.direction}</span>
-                </div>
+                </button>
                 <button className="ghost" onClick={() => onDelete(m.id)}>Delete</button>
               </li>
             ))}

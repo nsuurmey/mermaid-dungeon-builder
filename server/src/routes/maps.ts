@@ -7,6 +7,11 @@ import {
   updateMap,
   deleteMap,
 } from '../repos/maps.js';
+import { listAreas } from '../repos/areas.js';
+import { listConnections } from '../repos/connections.js';
+import { listMonstersForMap } from '../repos/monsters.js';
+import { areasRouter } from './areas.js';
+import { connectionsRouter } from './connections.js';
 import {
   TONES,
   DIRECTIONS,
@@ -14,6 +19,7 @@ import {
   type UpdateMapInput,
   type Tone,
   type Direction,
+  type FullMap,
 } from '../types.js';
 
 export const mapsRouter = Router();
@@ -65,6 +71,23 @@ mapsRouter.get('/:id', (req, res) => {
   res.json(map);
 });
 
+// Everything the editor needs to load one map in a single round trip.
+mapsRouter.get('/:id/full', (req, res) => {
+  const db = getDb();
+  const map = getMap(db, req.params.id);
+  if (!map) {
+    res.status(404).json({ error: 'map not found' });
+    return;
+  }
+  const full: FullMap = {
+    map,
+    areas: listAreas(db, map.id),
+    connections: listConnections(db, map.id),
+    monsters: listMonstersForMap(db, map.id),
+  };
+  res.json(full);
+});
+
 mapsRouter.patch('/:id', (req, res) => {
   const body = req.body ?? {};
   const patch: UpdateMapInput = {};
@@ -112,3 +135,7 @@ mapsRouter.delete('/:id', (req, res) => {
   }
   res.status(204).end();
 });
+
+// Nested resources.
+mapsRouter.use('/:mapId/areas', areasRouter);
+mapsRouter.use('/:mapId/connections', connectionsRouter);
