@@ -300,6 +300,54 @@ button.link {
   border-radius: 0.5rem;
 }
 
+/* --- Mermaid panel --- */
+
+.mermaid-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.tabs button {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(128, 128, 128, 0.4);
+  padding: 0.3rem 0.7rem;
+}
+
+.tabs button.active {
+  background: #3b6ea5;
+  color: #fff;
+  border-color: transparent;
+}
+
+.mermaid-wrap {
+  overflow: auto;
+}
+
+.mermaid-svg svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mmd-text {
+  width: 100%;
+  min-height: 20rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.4);
+  background: rgba(128, 128, 128, 0.06);
+  resize: vertical;
+}
+
 @media (max-width: 720px) {
   .split {
     grid-template-columns: 1fr;

@@ -10,6 +10,7 @@ import type {
 import * as api from '../api';
 import { AreaForm } from './AreaForm';
 import { ConnectionsPanel } from './ConnectionsPanel';
+import { MermaidPanel } from '../mermaid/MermaidView';
 
 export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => void }) {
   const [full, setFull] = useState<FullMap | null>(null);
@@ -226,22 +227,9 @@ export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => v
           />
         </section>
 
-        {/* RIGHT: Mermaid arrives in Phase 3 */}
+        {/* RIGHT: rendered Mermaid + raw text (read-only until Phase 4) */}
         <section className="pane right">
-          <div className="placeholder">
-            <h3>Diagram</h3>
-            <p className="muted">
-              The Mermaid diagram and two-way text sync arrive in Phase 3. For now,
-              here's the current structure:
-            </p>
-            <pre className="structure">
-{full.areas.map((a) => `${a.id}: ${a.name || '(unnamed)'}`).join('\n') || '(no areas)'}
-{'\n\n'}
-{full.connections
-  .map((c) => `${c.from_area} ${c.bidirectional ? '<->' : '-->'} ${c.to_area}  [${c.type}]`)
-  .join('\n')}
-            </pre>
-          </div>
+          <MermaidPanel full={full} onSelectArea={setSelectedAreaId} />
         </section>
       </div>
     </div>

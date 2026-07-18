@@ -59,8 +59,10 @@ npm start       # serves API + built client on $PORT
   monster) and Map CRUD API + minimal map-list UI.
 - **Phase 2** — Area/Connection/Monster CRUD APIs (nested under a map), slug
   minting (`A1`, `A2`, … never reused), and the split-pane structured editor
-  (left pane) with autosaving forms and monster sub-forms. The right pane shows
-  a text preview as a placeholder until Phase 3.
+  (left pane) with autosaving forms and monster sub-forms.
+- **Phase 3** — Mermaid generation + rendered right pane. Forms drive a live,
+  B&W-distinct diagram (`client/src/mermaid/`); Diagram/Text tabs; clicking a
+  node opens that area's form. Raw text is read-only until Phase 4 adds Apply.
 
-Remaining phases — Mermaid two-way sync (right pane), print view,
-export/import — are tracked against the PRD sections.
+Remaining phases — Mermaid text→data sync (Phase 4 parser + Apply/import),
+print view, export/import — are tracked against the PRD sections.
