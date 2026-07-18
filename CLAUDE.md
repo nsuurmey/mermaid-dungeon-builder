@@ -146,6 +146,36 @@ password gate.
 print variant; PNG/image export; Bestiary lookup/autofill; drag-to-position
 layout; Discord bot integration.
 
+## Build, install & migrations
+
+- **Schema migrations** are versioned via `PRAGMA user_version` and run in a
+  transaction on boot (`server/src/schema.ts`). Bump `CURRENT_VERSION` and
+  append a step to `MIGRATIONS` for any schema change — never edit an applied
+  step.
+- **Shared types layout (b):** `server/src/types.ts` is the source of truth for
+  domain/API shapes; `client/src/types.ts` hand-copies the subset it needs.
+  Keep them in sync when shapes change.
+- **Tests:** `npm test` (server) runs `node:test` via `tsx` — no test-runner
+  dependency. Repos take an explicit `Database` so tests use an in-memory DB
+  (`openDatabase(':memory:')`).
+- **Native install (`better-sqlite3`):** `.npmrc` sets `build_from_source=true`
+  so installs don't depend on the GitHub prebuild download (portable, incl.
+  Railway). In sandboxes that also block `nodejs.org` header downloads, point
+  node-gyp at the local Node: `npm_config_nodedir=/opt/node22 npm install`.
+
+## Decisions log
+
+- **Slug minting (flag 3):** Area slugs auto-increment (`A1`, `A2`, …) and are
+  never reused. The `map.area_seq` monotonic counter backs this; the actual
+  minting behavior is being validated in Phase 2 (areas aren't creatable yet).
+- **Direction:** per-map `TD`/`LR` toggle, default `TD` (PRD §10).
+- **Maps are flat (flag 4):** no sub-areas / nested zones / subgraphs in MVP.
+- **Raw-text edits may change edge `type` (flag 2):** label markers (`(S)`,
+  `(L)`, `"door"`) are the disambiguator when parsing style → type.
+- IDs: Map = UUID; Connection/Monster = autoincrement int; Area = slug
+  (composite PK `map_id,id`). Timestamps are ISO strings. Deletes cascade
+  map → area → {connection, monster}.
+
 ## Conventions
 
 - TypeScript everywhere; prefer explicit types at module boundaries (API

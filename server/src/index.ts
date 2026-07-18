@@ -6,6 +6,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { PORT, DB_PATH, isProd } from './env.js';
 import { getDb } from './db.js';
+import { mapsRouter } from './routes/maps.js';
 import {
   requireAuth,
   isAuthed,
@@ -51,10 +52,8 @@ app.post('/api/auth/logout', (_req, res) => {
   res.json({ authed: false });
 });
 
-// --- Protected API (Phase 1+ mounts real routes here) ---
-app.get('/api/ping', requireAuth, (_req, res) => {
-  res.json({ pong: true, time: new Date().toISOString() });
-});
+// --- Protected API ---
+app.use('/api/maps', requireAuth, mapsRouter);
 
 // --- Static frontend (served when a client build exists) ---
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
