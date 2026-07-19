@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { getAuthStatus, login, logout } from './api';
 import { MapsScreen } from './MapsScreen';
 import { EditorScreen } from './editor/EditorScreen';
+import { PrintView } from './print/PrintView';
+
+const PRINT_PATH = /^\/print\/(.+)$/;
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -25,6 +28,12 @@ export default function App() {
 
   if (!authed) {
     return <LoginScreen onSuccess={() => setAuthed(true)} />;
+  }
+
+  // Dedicated print route (opened in its own tab from the editor).
+  const printMatch = PRINT_PATH.exec(window.location.pathname);
+  if (printMatch) {
+    return <PrintView mapId={decodeURIComponent(printMatch[1])} />;
   }
 
   if (openMapId) {

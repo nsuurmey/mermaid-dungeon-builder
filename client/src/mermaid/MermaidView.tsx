@@ -2,18 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import type { FullMap } from '../types';
 import { generateMermaid } from './generate';
-
-let initialized = false;
-function ensureInit() {
-  if (initialized) return;
-  mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: 'loose',
-    theme: 'neutral',
-    flowchart: { htmlLabels: true, useMaxWidth: true },
-  });
-  initialized = true;
-}
+import { ensureMermaidInit } from './render';
 
 /** Renders Mermaid text to SVG and wires node clicks back to the area forms. */
 function MermaidDiagram({
@@ -36,7 +25,7 @@ function MermaidDiagram({
   onSelectRef.current = onSelectArea;
 
   useEffect(() => {
-    ensureInit();
+    ensureMermaidInit();
     let cancelled = false;
     const renderId = `eem-mmd-${++seq.current}`;
     mermaid

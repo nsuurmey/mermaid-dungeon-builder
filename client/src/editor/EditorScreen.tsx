@@ -211,6 +211,12 @@ export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => v
             <option value="LR">LR</option>
           </select>
         </label>
+        <button
+          className="ghost"
+          onClick={() => window.open(`/print/${encodeURIComponent(mapId)}`, '_blank')}
+        >
+          Print / PDF
+        </button>
         {error && <span className="error tiny">{error}</span>}
       </header>
 

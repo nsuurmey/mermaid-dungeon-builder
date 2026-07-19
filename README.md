@@ -68,6 +68,9 @@ npm start       # serves API + built client on $PORT
   removed→prompt-before-delete, renamed→update name, edge changes→update
   connections). DB-only properties are never touched; unparseable text is inert.
   Paste-to-seed import on the Maps screen.
+- **Phase 5** — Print view at `/print/<mapId>` (opened from the editor's
+  Print button). B&W print CSS for Letter/A4: page 1 = title + one-page diagram
+  + connections legend; following pages = numbered room key in ID order with
+  compact Eem stat lines. Browser print → PDF.
 
-Remaining phases — print view, JSON/Mermaid export & JSON import — are tracked
-against the PRD sections.
+Remaining phase — JSON/Mermaid export & JSON import — is tracked against PRD §6.

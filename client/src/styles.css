@@ -369,6 +369,131 @@ button.link {
   }
 }
 
+/* --- Print view ----------------------------------------------------------- */
+
+.print-root {
+  max-width: 8in;
+  margin: 0 auto;
+  padding: 0.5in;
+  background: #fff;
+  color: #000;
+}
+
+.print-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.print-page-1 {
+  position: relative;
+}
+
+.print-page-1 h1 {
+  margin: 0 0 0.5rem;
+  text-align: center;
+}
+
+.print-diagram {
+  display: flex;
+  justify-content: center;
+}
+
+.print-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.print-legend {
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 0.5rem;
+}
+
+.print-legend ul {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.1rem 1rem;
+}
+
+.legend-glyph {
+  font-family: ui-monospace, monospace;
+  display: inline-block;
+  min-width: 5.5rem;
+}
+
+.print-key {
+  margin-top: 1rem;
+}
+
+.key-entry {
+  break-inside: avoid;
+  padding: 0.5rem 0;
+  border-top: 1px solid #000;
+}
+
+.key-entry h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.key-entry p {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+}
+
+.key-gm {
+  border-left: 3px solid #000;
+  padding-left: 0.5rem;
+  font-style: italic;
+}
+
+.key-monsters {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+
+.key-monsters li {
+  font-family: ui-monospace, monospace;
+}
+
+@media print {
+  @page {
+    size: Letter;
+    margin: 0.5in;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .print-root {
+    max-width: none;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-page-1 {
+    page-break-after: always;
+  }
+
+  .print-diagram svg {
+    max-height: 8in;
+  }
+}
+
 h1 {
   margin: 0;
   font-size: 1.5rem;
