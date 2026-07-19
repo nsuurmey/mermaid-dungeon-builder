@@ -175,6 +175,14 @@ layout; Discord bot integration.
 - IDs: Map = UUID; Connection/Monster = autoincrement int; Area = slug
   (composite PK `map_id,id`). Timestamps are ISO strings. Deletes cascade
   map → area → {connection, monster}.
+- **Mermaid gen+parse live client-side** (`client/src/mermaid/`), colocated so
+  the type↔style mapping can't drift. The live view regenerates on every form
+  edit and Phase 4's Apply parses there; the server stays structured-data only
+  and `.mmd` export is a client download of the current text.
+- **Edge Mermaid forms** (verified rendering): open `A===B`, pathway `A---B`,
+  door `A -- "door" --- B`, secret `A -. "(S)" .- B`, locked `A -- "(L) 🔒" --- B`,
+  one-way `A-->B`, custom `A -- "label" --- B`. Directed (arrow) when the type is
+  one-way or `bidirectional` is false.
 
 ## Conventions
 

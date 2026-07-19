@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getAuthStatus, login, logout } from './api';
 import { MapsScreen } from './MapsScreen';
+import { EditorScreen } from './editor/EditorScreen';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
   const [gateEnabled, setGateEnabled] = useState(false);
+  const [openMapId, setOpenMapId] = useState<string | null>(null);
 
   useEffect(() => {
     getAuthStatus()
@@ -25,9 +27,14 @@ export default function App() {
     return <LoginScreen onSuccess={() => setAuthed(true)} />;
   }
 
+  if (openMapId) {
+    return <EditorScreen mapId={openMapId} onBack={() => setOpenMapId(null)} />;
+  }
+
   return (
     <MapsScreen
       gateEnabled={gateEnabled}
+      onOpen={setOpenMapId}
       onLogout={async () => {
         await logout();
         setAuthed(false);
