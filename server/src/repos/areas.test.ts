@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { openDatabase } from '../db.js';
 import { createMap } from './maps.js';
-import { listAreas, createArea, updateArea, deleteArea, getArea } from './areas.js';
+import { listAreas, createArea, createAreaWithId, updateArea, deleteArea, getArea } from './areas.js';
 import { createConnection, listConnections } from './connections.js';
 import { createMonster, listMonstersForMap } from './monsters.js';
 
@@ -59,6 +59,24 @@ test('deleting an area cascades its connections and monsters', () => {
   assert.equal(listConnections(db, mapId).length, 0, 'connection should cascade');
   assert.equal(listMonstersForMap(db, mapId).length, 0, 'monster should cascade');
   assert.equal(getArea(db, mapId, b.id)?.id, b.id, 'other area survives');
+});
+
+test('createAreaWithId honors an explicit slug and reports conflicts', () => {
+  const { db, mapId } = setup();
+  const a = createAreaWithId(db, mapId, 'A5', { name: 'Vault' });
+  assert.notEqual(a, 'no-map');
+  assert.notEqual(a, 'conflict');
+  assert.equal(typeof a === 'object' ? a.id : null, 'A5');
+  // Re-using the same slug conflicts.
+  assert.equal(createAreaWithId(db, mapId, 'A5'), 'conflict');
+  assert.equal(createAreaWithId(db, 'no-map', 'A1'), 'no-map');
+});
+
+test('createAreaWithId advances area_seq so minted slugs never collide', () => {
+  const { db, mapId } = setup();
+  createAreaWithId(db, mapId, 'A5'); // jump the high-water mark to 5
+  const next = createArea(db, mapId); // minted slug must clear it
+  assert.equal(next?.id, 'A6');
 });
 
 test('createConnection rejects endpoints outside the map', () => {

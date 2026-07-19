@@ -10,7 +10,10 @@ import type {
 import * as api from '../api';
 import { AreaForm } from './AreaForm';
 import { ConnectionsPanel } from './ConnectionsPanel';
-import { MermaidPanel } from '../mermaid/MermaidView';
+import { MermaidPanel, type ApplyOutcome } from '../mermaid/MermaidView';
+import { parseMermaid } from '../mermaid/parse';
+import { reconcile, planIsEmpty } from '../mermaid/reconcile';
+import { applyPlan } from '../mermaid/apply';
 
 export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => void }) {
   const [full, setFull] = useState<FullMap | null>(null);
@@ -137,6 +140,37 @@ export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => v
     }
   }
 
+  // --- raw-text Apply (Phase 4 two-way sync) ---
+  async function onApplyText(text: string): Promise<ApplyOutcome> {
+    if (!full) return { ok: false, error: 'Map not loaded' };
+    const parsed = parseMermaid(text);
+    if (!parsed.ok) return { ok: false, error: parsed.error };
+
+    const plan = reconcile(full, parsed.graph);
+    if (planIsEmpty(plan)) return { ok: true };
+
+    if (plan.deleteAreaIds.length > 0) {
+      const ok = confirm(
+        `Apply will DELETE ${plan.deleteAreaIds.length} area(s): ` +
+          `${plan.deleteAreaIds.join(', ')} — including their monsters and ` +
+          `connections. This cannot be undone. Continue?`,
+      );
+      if (!ok) return { ok: false, error: 'Apply cancelled — data unchanged.' };
+    }
+
+    try {
+      await applyPlan(mapId, plan);
+      const fresh = await api.getFullMap(mapId);
+      setFull(fresh);
+      setSelectedAreaId((cur) =>
+        cur && fresh.areas.some((a) => a.id === cur) ? cur : fresh.areas[0]?.id ?? null,
+      );
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : 'Apply failed' };
+    }
+  }
+
   if (loading) return <main className="shell"><p>Loading…</p></main>;
   if (!full) {
     return (
@@ -229,7 +263,7 @@ export function EditorScreen({ mapId, onBack }: { mapId: string; onBack: () => v
 
         {/* RIGHT: rendered Mermaid + raw text (read-only until Phase 4) */}
         <section className="pane right">
-          <MermaidPanel full={full} onSelectArea={setSelectedAreaId} />
+          <MermaidPanel full={full} onSelectArea={setSelectedAreaId} onApply={onApplyText} />
         </section>
       </div>
     </div>

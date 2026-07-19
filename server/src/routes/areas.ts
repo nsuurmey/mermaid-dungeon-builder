@@ -4,6 +4,7 @@ import {
   listAreas,
   getArea,
   createArea,
+  createAreaWithId,
   updateArea,
   deleteArea,
 } from '../repos/areas.js';
@@ -43,6 +44,27 @@ areasRouter.post('/', (req, res) => {
     return;
   }
   const { mapId } = req.params as unknown as { mapId: string };
+  const rawId = (req.body as Record<string, unknown> | undefined)?.id;
+
+  // Explicit id (from Mermaid text / import) vs auto-minted slug (form add).
+  if (rawId !== undefined) {
+    if (typeof rawId !== 'string' || !/^[A-Za-z][\w]*$/.test(rawId)) {
+      res.status(400).json({ error: 'id must match [A-Za-z][A-Za-z0-9_]*' });
+      return;
+    }
+    const result = createAreaWithId(getDb(), mapId, rawId, parsed.value);
+    if (result === 'no-map') {
+      res.status(404).json({ error: 'map not found' });
+      return;
+    }
+    if (result === 'conflict') {
+      res.status(409).json({ error: `area id "${rawId}" already exists` });
+      return;
+    }
+    res.status(201).json(result);
+    return;
+  }
+
   const area = createArea(getDb(), mapId, parsed.value);
   if (!area) {
     res.status(404).json({ error: 'map not found' });

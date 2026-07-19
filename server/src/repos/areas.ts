@@ -64,6 +64,56 @@ export function createArea(
   return tx();
 }
 
+/**
+ * Creates an area with a caller-supplied slug (from Mermaid text on Apply /
+ * import, where the node ID is authoritative). Returns:
+ *   - the Area on success,
+ *   - 'no-map' if the map doesn't exist,
+ *   - 'conflict' if the slug is already taken in this map.
+ * If the id matches the A<n> pattern, the map's area_seq high-water mark is
+ * advanced so later minted slugs never collide with it.
+ */
+export function createAreaWithId(
+  db: Database.Database,
+  mapId: string,
+  id: string,
+  input: CreateAreaInput = {},
+): Area | 'no-map' | 'conflict' {
+  const tx = db.transaction((): Area | 'no-map' | 'conflict' => {
+    const map = db
+      .prepare('SELECT area_seq FROM map WHERE id = ?')
+      .get(mapId) as { area_seq: number } | undefined;
+    if (!map) return 'no-map';
+    if (getArea(db, mapId, id)) return 'conflict';
+
+    const now = new Date().toISOString();
+    const area: Area = {
+      id,
+      map_id: mapId,
+      name: input.name ?? '',
+      description: input.description ?? '',
+      gm_notes: input.gm_notes ?? '',
+      treasure: input.treasure ?? '',
+      features: input.features ?? '',
+      created_at: now,
+      updated_at: now,
+    };
+    const match = /^A(\d+)$/.exec(id);
+    const seq = match ? Math.max(map.area_seq, Number(match[1])) : map.area_seq;
+    db.prepare('UPDATE map SET area_seq = ?, updated_at = ? WHERE id = ?').run(
+      seq,
+      now,
+      mapId,
+    );
+    db.prepare(
+      `INSERT INTO area (${COLUMNS})
+       VALUES (@id, @map_id, @name, @description, @gm_notes, @treasure, @features, @created_at, @updated_at)`,
+    ).run(area);
+    return area;
+  });
+  return tx();
+}
+
 export function updateArea(
   db: Database.Database,
   mapId: string,
